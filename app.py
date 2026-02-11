@@ -219,7 +219,8 @@ Decision depends on risk tolerance.
 """)
 
     st.markdown("---")
-    st.header("🏠 Case Scenarios")
+    st.caption("Assumption: House price equals loan amount")
+    st.header("🏠 Home loan Scenarios")
 
     rent = st.number_input("Monthly Rent", value=8000)
     discount_rate = st.number_input("Discount Rate (%)", value=8.0)
