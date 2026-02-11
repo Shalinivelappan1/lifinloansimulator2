@@ -284,6 +284,19 @@ Lower total cost option is financially better.
     ax.plot(rates, vals)
     ax.axhline(0, linestyle="--")
     st.pyplot(fig)
+    st.markdown("""
+### 📈 How to read this chart
+
+The horizontal line at **0** is the break-even point.
+
+• If the line is **below 0** → Buying is cheaper  
+• If the line is **above 0** → Renting is cheaper  
+
+Where the curve crosses zero = the decision flips.
+
+This shows how sensitive the decision is to interest rate changes.
+""")
+
 
     # HEATMAP
     st.subheader("🔥 Sensitivity Heatmap")
@@ -312,3 +325,17 @@ Lower total cost option is financially better.
     fig2, ax2 = plt.subplots()
     sns.heatmap(df, cmap="RdYlGn_r", center=0)
     st.pyplot(fig2)
+    st.markdown("""
+### 🔥 How to read this heatmap
+
+Each cell shows whether **buying** or **renting** is better.
+
+X-axis → Interest rate  
+Y-axis → House price growth  
+
+🟢 Green → Buying better  
+🔴 Red → Renting better  
+
+Small changes in assumptions can flip the decision.
+""")
+
