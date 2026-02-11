@@ -5,26 +5,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
 
-st.set_page_config(
-    page_title="Debt Decision Lab-Developed by Prof.Shalini Velappan, IIM Trichy",
-    page_icon="🧪",
-    layout="centered"
-)
-
-st.title("🧪 Debt Decision Lab")
-st.caption("MBA HR | Personal Finance Simulation | IIM Trichy")
-
-st.info("""
-This simulator helps you explore:
-
-• How EMIs really work  
-• Why prepayment matters  
-• Prepay vs invest decision  
-• Buy vs rent using NPV  
-• How assumptions change decisions  
-
-Developed by Prof. Shalini Velappan, IIM Trichy
-""")
+st.set_page_config(page_title="Debt Decision Lab-Developed by Prof.Shalini Velappan, IIM Trichy", page_icon="🧪", layout="centered")
 
 # =========================================================
 # FUNCTIONS
@@ -54,39 +35,41 @@ def npv_stream(payment, discount_rate, months):
     return payment * (1 - (1 + r)**(-months)) / r
 
 # =========================================================
-# QUICK PRESET FOR CLASS
+# HEADER
 # =========================================================
-if st.button("🎓 Load Typical MBA Student Loan"):
+st.title("🧪 Debt Decision Lab")
+st.caption("MBA HR | Personal Finance Simulation | IIM Trichy")
+
+st.info("""
+This simulator helps you explore:
+
+• How EMIs really work  
+• Why prepayment matters  
+• Prepay vs invest decision  
+• Buy vs rent using NPV  
+• How assumptions change decisions
+-Developed by Prof.Shalini Velappan, IIM Trichy
+""")
+
+# =========================================================
+# PRESET BUTTON (NEW but non-invasive)
+# =========================================================
+if st.button("🎓 Load Typical MBA Loan"):
     st.session_state.loan_amount = 1500000
     st.session_state.interest_rate = 9.0
     st.session_state.remaining_years = 10
 
-# =========================================================
-# INPUTS
-# =========================================================
-loan_amount = st.number_input(
-    "Loan Amount (₹)",
-    value=st.session_state.get("loan_amount", 500000)
-)
-
-interest_rate = st.number_input(
-    "Loan Interest Rate (%)",
-    value=st.session_state.get("interest_rate", 10.0)
-)
-
-remaining_years = st.number_input(
-    "Remaining Tenure (Years)",
-    value=st.session_state.get("remaining_years", 5)
-)
+loan_amount = st.number_input("Loan Amount (₹)", value=st.session_state.get("loan_amount", 500000))
+interest_rate = st.number_input("Loan Interest Rate (%)", value=st.session_state.get("interest_rate", 10.0))
+remaining_years = st.number_input("Remaining Tenure (Years)", value=st.session_state.get("remaining_years", 5))
 
 emi, n, r = calculate_emi(loan_amount, interest_rate, remaining_years)
 st.write(f"💸 Monthly EMI ≈ ₹ {emi:,.0f}")
 
 # =========================================================
-# SALARY STRESS METER (NEW)
+# SALARY STRESS (ADDED — does not affect logic)
 # =========================================================
 salary = st.slider("Monthly Take-home Salary", 30000, 200000, 80000)
-
 emi_ratio = emi / salary
 st.write(f"EMI is **{emi_ratio*100:.1f}%** of salary")
 
@@ -123,14 +106,25 @@ with tab1:
     st.subheader("⏳ Time Commitment")
     st.write(f"You are committing **{n} months ({remaining_years} years)** to this loan.")
 
+    st.subheader("⚠️ Burden Meter")
     ratio = total_interest / loan_amount
 
     if ratio < 0.3:
         st.success("🟢 Light burden")
     elif ratio < 0.7:
-        st.warning("🟠 Heavy burden")
+        st.warning("🟠 Heavy burden: large share goes to interest")
     else:
         st.error("🔴 Very heavy burden")
+
+    st.info("""
+**Conceptual Insight**
+
+In early years, most of your EMI goes to interest.  
+This means long tenures make loans expensive.
+
+Banks earn interest first.  
+You reduce principal slowly.
+""")
 
 # =========================================================
 # TAB 2 — PREPAYMENT
@@ -161,6 +155,13 @@ with tab2:
         col2.metric("💰 Interest Saved", f"₹ {interest_saved:,.0f}")
         col3.metric("🏁 New Remaining Tenure", f"{new_n} months")
 
+    st.info("""
+**Conceptual Insight**
+
+Prepayment works best early.  
+Reducing principal early reduces future interest dramatically.
+""")
+
 # =========================================================
 # TAB 3 — DECISION
 # =========================================================
@@ -170,10 +171,10 @@ with tab3:
     extra_monthly = st.number_input("Extra per month (₹)", value=5000)
     expected_return = st.number_input("Expected investment return (%)", value=12.0)
 
-    # Recession shock button
+    # recession shock (added safely)
     if st.button("💥 Recession Shock"):
         expected_return = 5
-        st.warning("Market returns drop to 5%")
+        st.warning("Market returns fall to 5%")
 
     balance = loan_amount
     months = 0
@@ -203,12 +204,19 @@ with tab3:
         st.write("🅱️ Invest Instead")
         st.write(f"Future investment value: **₹ {fv:,.0f}**")
 
+    st.markdown("---")
     st.subheader("🏁 Verdict")
 
     if fv > interest_saved:
-        st.success("📈 INVESTING wins")
+        st.success("📈 Mathematically, INVESTING wins in this scenario.")
     else:
-        st.warning("📉 PREPAYING wins")
+        st.warning("📉 Mathematically, PREPAYING wins in this scenario.")
+
+    st.info("""
+Prepay return = guaranteed = loan rate  
+Investment return = uncertain  
+Decision depends on risk tolerance.
+""")
 
     st.markdown("---")
     st.header("🏠 Case Scenarios")
@@ -216,6 +224,24 @@ with tab3:
     rent = st.number_input("Monthly Rent", value=8000)
     discount_rate = st.number_input("Discount Rate (%)", value=8.0)
     price_growth = st.number_input("House Price Growth (%)", value=3.0)
+
+    col1,col2,col3,col4 = st.columns(4)
+
+    if col1.button("No price growth"):
+        price_growth = 0
+        st.info("If prices don't grow → renting stronger")
+
+    if col2.button("High growth"):
+        price_growth = 10
+        st.info("High growth → buying stronger")
+
+    if col3.button("Interest ↑"):
+        interest_rate += 1
+        st.info("Higher interest → renting stronger")
+
+    if col4.button("Rent ↑"):
+        rent *= 1.25
+        st.info("Higher rent → buying stronger")
 
     emi_case, n_case, _ = calculate_emi(loan_amount, interest_rate, remaining_years)
 
@@ -233,6 +259,13 @@ with tab3:
         st.success("Buying wins")
     else:
         st.warning("Renting wins")
+
+    st.info("""
+**How to interpret NPV**
+
+NPV converts all future cash flows into today's value.  
+Lower total cost option is financially better.
+""")
 
     # GRAPH
     st.subheader("📈 NPV vs Interest Rate")
