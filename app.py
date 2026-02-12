@@ -48,7 +48,6 @@ This simulator helps you explore:
 • Prepay vs invest decision  
 • Buy vs rent using NPV  
 • How assumptions change decisions
--Developed by Prof.Shalini Velappan, IIM Trichy
 """)
 
 # =========================================================
