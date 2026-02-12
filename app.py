@@ -38,7 +38,7 @@ def npv_stream(payment, discount_rate, months):
 # HEADER
 # =========================================================
 st.title("🧪 Debt Decision Lab")
-st.caption("MBA HR | Personal Finance Simulation | IIM Trichy")
+st.caption("MBA HR | Personal Finance Simulation | Developed by Prof.Shalini Velappan, IIM Trichy")
 
 st.info("""
 This simulator helps you explore:
